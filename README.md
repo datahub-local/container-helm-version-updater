@@ -73,3 +73,14 @@ jobs:
           branch: "chore/bump_versions_"
           title: 'Bump version of Helm Charts / Container Images (${{ steps.vars.outputs.current_date }})'
 ```
+
+
+<!--
+## Create Github Action version
+
+```bash
+VERSION=v1
+
+git push origin :$VERSION || true && git tag -d v$VERSION || true && git tag v$VERSION && git push --tags
+```
+-->

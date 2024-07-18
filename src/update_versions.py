@@ -1,5 +1,6 @@
 import argparse
 from dataclasses import dataclass
+import json
 import logging
 import os
 import re
@@ -42,7 +43,7 @@ def _get_helm_versions(repo_name: str, repo_url: str, chart_name) -> List[str]:
 
     try:
         if repo_name not in _HELM_REPOSITORY_CHART_VERSION_CACHE:
-            logging.info("Loading charts for repoisitory '%s'", repo_name)
+            logging.debug("Loading charts for repoisitory '%s'", repo_name)
 
             response = requests.get(f"{repo_url}/index.yaml")
 
@@ -173,7 +174,7 @@ HELM_CHART_REPOSITORY_ATTRIBURE = "helm_chart_repository"
 def _update_container(versions: Dict[str, Any], version_type: str) -> bool:
     container_image_versions = versions.get("container_image_version", {})
 
-    modified = False
+    changed = False
 
     if container_image_versions:
         for (
@@ -197,19 +198,19 @@ def _update_container(versions: Dict[str, Any], version_type: str) -> bool:
 
                 container_image_versions[image_name] = last_version.version
 
-                modified = True
+                changed = True
 
-        if modified:
+        if changed:
             versions["container_image_version"] = container_image_versions
 
-    return modified
+    return changed
 
 
 def _update_helm(versions: Dict[str, Any], version_type: str) -> bool:
     helm_chart_versions = versions.get(HELM_CHART_VERSION_ATTRIBURE, {})
     helm_chart_repository = versions.get(HELM_CHART_REPOSITORY_ATTRIBURE, {})
 
-    modified = False
+    changed = False
 
     if helm_chart_versions and helm_chart_repository:
         for full_chart_name, _current_version in helm_chart_versions.items():
@@ -236,35 +237,50 @@ def _update_helm(versions: Dict[str, Any], version_type: str) -> bool:
 
                     helm_chart_versions[full_chart_name] = last_version.version
 
-                    modified = True
-                else:
-                    logging.warning(
-                        "Chart '%s' does not have a repo_url", full_chart_name
-                    )
+                    changed = True
+            else:
+                logging.warning("Chart '%s' does not have a repo_url", full_chart_name)
 
-        if modified:
+        if changed:
             versions[HELM_CHART_VERSION_ATTRIBURE] = helm_chart_versions
 
-    return modified
+    return changed
 
 
-def _update_versions(
-    versions_path: str, skip_helm: bool, skip_cotainer: bool, version_type: str
-):
-    with open(versions_path, "r") as f:
+def update_versions(
+    versions_file: str,
+    version_type: str,
+    skip_helm: bool = False,
+    skip_container: bool = False,
+    dry_mode: bool = False,
+) -> bool:
+    with open(versions_file, "r") as f:
+        logging.info("Reading versions file %s", versions_file)
         versions = yaml.safe_load(f)
 
-        modified = False
+        changed = False
 
-        if not skip_cotainer:
-            modified = _update_container(versions, version_type)
+        if not skip_container:
+            logging.info("Updating Container Image versions")
+            changed = _update_container(versions, version_type)
 
         if not skip_helm:
-            modified = _update_helm(versions, version_type)
+            logging.info("Updating Helm Chart versions")
+            changed = _update_helm(versions, version_type)
 
-        if modified:
-            with open(versions_path, "w") as fw:
-                yaml.dump(versions, fw)
+        if changed:
+            if dry_mode:
+                logging.info(
+                    "New versions file %s: %s",
+                    versions_file,
+                    json.dumps(versions, indent=2),
+                )
+            else:
+                logging.info("Writing versions file %s", versions_file)
+                with open(versions_file, "w") as fw:
+                    yaml.dump(versions, fw)
+
+        return changed
 
 
 def main():
@@ -275,23 +291,30 @@ def main():
         dest="versions_file",
         help="Path to the YAML file",
     )
-    parser.add_argument("--skip-helm", dest="skip_helm", type=_str2bool, default=True)
+    parser.add_argument("--version-type", dest="version_type", default="minor")
+    parser.add_argument("--skip-helm", dest="skip_helm", type=_str2bool, default=False)
     parser.add_argument(
-        "--skip-container", dest="skip_container", type=_str2bool, default=True
+        "--skip-container", dest="skip_container", type=_str2bool, default=False
     )
-    parser.add_argument(
-        "--version-type", dest="version_type", type=_str2bool, default="minor"
-    )
+    parser.add_argument("--dry-mode", dest="dry_mode", action="store_true")
     args = parser.parse_args()
 
     logging.info(
-        "Updating Container image and Helm chart versions for '%s'", args.versions
+        "Updating Container image and Helm chart versions for '%s'", args.versions_file
     )
 
-    _update_versions(args.versions_path)
+    result = update_versions(
+        args.versions_file,
+        args.version_type,
+        skip_container=args.skip_container,
+        skip_helm=args.skip_helm,
+        dry_mode=args.dry_mode,
+    )
 
     logging.info(
-        "Updated Container image and Helm chart versions for '%s'", args.versions
+        "Updated Container image and Helm chart versions for '%s': %s",
+        args.versions_file,
+        result,
     )
 
 
