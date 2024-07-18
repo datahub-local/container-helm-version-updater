@@ -1,0 +1,37 @@
+name: Container image and Helm chart versions update Action
+description: "Action to update container image and Helm versions."
+branding:
+  icon: "arrow-down-circle"
+  color: purple
+inputs:
+  versions-file:
+    description: Path to the versions file.
+    required: true
+  skip-container:
+    description: true if you want to update only Container images.
+    required: false
+    default: "false"
+  skip-helm:
+    description: true if you want to update only Helm chart.
+    required: false
+    default: "false"
+  version-type:
+    description: "Which maximun version change you expect to find. It can be: 'major', 'minor' and 'patch'"
+    required: false
+    default: "minor"
+
+outputs: {}
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - src/update_versions.py
+    - --versions-file
+    - ${{ inputs.versions-file }}
+    - --skip-container
+    - ${{ inputs.skip-container }}
+    - --skip-helm
+    - ${{ inputs.skip-helm }}
+    - --version-type
+    - ${{ inputs.version-type }}
