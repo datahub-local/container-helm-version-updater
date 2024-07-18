@@ -63,7 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           versions-file: values/versions.yaml
-          version-type: MINOR
+          version-type: minor
           
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
@@ -72,5 +72,4 @@ jobs:
           commit-message: 'chore: bump version of Helm Charts / Container Images until ${{ steps.vars.outputs.current_date }}'
           branch: "chore/bump_versions_"
           title: 'Bump version of Helm Charts / Container Images (${{ steps.vars.outputs.current_date }})'
-
 ```
