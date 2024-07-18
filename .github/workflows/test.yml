@@ -1,9 +1,9 @@
-name: Test
+name: Main
 
 on: [push]
 
 jobs:
-  release:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -11,5 +11,7 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-      - run: pip install -r requirements.txt
-      - run: pip test
+      - run: pip install -r requirements.txt requirements-dev.txt
+      - run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          pytest
