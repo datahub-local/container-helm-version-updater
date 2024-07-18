@@ -81,6 +81,6 @@ jobs:
 ```bash
 VERSION=v1
 
-git push origin :$VERSION || true && git tag -d v$VERSION || true && git tag v$VERSION && git push --tags
+git push origin :$VERSION || true && git tag -d $VERSION || true && git tag $VERSION && git push --tags
 ```
 -->
