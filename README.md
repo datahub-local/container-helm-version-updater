@@ -3,7 +3,6 @@
 [![Test](https://github.com/datahub-local/container-helm-version-updater/actions/workflows/test.yml/badge.svg)](https://github.com/datahub-local/container-helm-version-updater/actions/workflows/test.yml)
 [![GitHub release badge](https://badgen.net/github/release/datahub-local/container-helm-version-updater/stable)](https://github.com/datahub-local/container-helm-version-updater/releases/latest)
 [![GitHub license badge](https://badgen.net/github/license/datahub-local/container-helm-version-updater)](https://github.com/datahub-local/container-helm-version-updater/blob/main/LICENSE)
-[![GitHub Workflows badge](https://badgen.net/runkit/lucacome/lucacome-workflow)](https://github.com/search?q=%22datahub-local%2Fcontainer-helm-version-updater%22+path%3A.github%2Fworkflows%2F+language%3AYAML&type=code)
 
 Action to update container image and Helm versions. This action will use Container Image provider APIs (only compatible with **hub.docker.com** **ghcr.io**) and Helm repositories to get the newest version (using [Semantic Versioning](https://semver.org/) logic), without the need to pull the images or charts.
 
