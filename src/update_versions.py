@@ -126,7 +126,10 @@ def _get_container_versions(image_name: str) -> List[str]:
         tags = _fetch_docker_hub_url(url)
 
         if tags:
-            return _remove_emtpy([sv.parse(tag.get("name")) for tag in tags])
+            semantic_versions = _remove_emtpy(
+                [sv.parse(tag.get("name")) for tag in tags]
+            )
+            return semantic_versions
         else:
             logging.warning(f"Failed to fetch tags for {image_name}.")
             return None
@@ -151,16 +154,16 @@ def _get_container_versions(image_name: str) -> List[str]:
             )
 
             if packages:
-                return _remove_emtpy(
+                semantic_versions = _remove_emtpy(
                     [
-                        sv.parse(
-                            p.get("metadata", {})
-                            .get("container", {})
-                            .get("tags", [None])[0]
-                        )
+                        sv.parse(t)
                         for p in packages
+                        if p
+                        for t in p.get("metadata", {}).get("container", {}).get("tags")
+                        if t
                     ]
                 )
+                return semantic_versions
             else:
                 logging.warning(f"Failed to fetch packages for {image_name}")
                 return None
