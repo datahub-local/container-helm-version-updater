@@ -80,7 +80,7 @@ def _fetch_docker_hub_url(url, headers={}, max_items=100):
             url = response.json().get("next")
         else:
             logging.warning(
-                "Failed to retrieve url[{url}]: {response.status_code} - {response.text}"
+                f"Failed to retrieve url[{url}]: {response.status_code} - {response.text}"
             )
             break
     return data
@@ -103,7 +103,7 @@ def _fetch_github_url(url, headers={}, max_items=100):
             url = _get_next_page_url(response)
         else:
             logging.warning(
-                "Failed to retrieve url[{url}]: {response.status_code} - {response.text}"
+                f"Failed to retrieve url[{url}]: {response.status_code} - {response.text}"
             )
             break
     return data
