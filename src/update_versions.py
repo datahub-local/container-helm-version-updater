@@ -303,7 +303,7 @@ def main():
     args = parser.parse_args()
 
     logging.info(
-        "Updating Container image and Helm chart versions for '%s'", args.versions_file
+        "Updating Container image and Helm chart versions [%s]", args
     )
 
     result = update_versions(
@@ -315,8 +315,8 @@ def main():
     )
 
     logging.info(
-        "Updated Container image and Helm chart versions for '%s': %s",
-        args.versions_file,
+        "Updated Container image and Helm chart versions [%s]: %s",
+        args,
         result,
     )
 

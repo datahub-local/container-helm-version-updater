@@ -26,9 +26,10 @@ class SemanticVersion:
             else:
                 return ""
 
-        m = re.match(SEMANTIC_VERSIONING_REGEX, version)
-        if m:
-            self.version = version
+        self.version = str(version)
+        
+        m = re.match(SEMANTIC_VERSIONING_REGEX, self.version)
+        if m:            
             self.major = _to_human_number(m.group(1))
             self.minor = _to_human_number(m.group(2)).lstrip(".")
             self.patch = _to_human_number(m.group(3)).lstrip(".")

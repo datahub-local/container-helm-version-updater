@@ -13,6 +13,7 @@ class TestUpdateVersions(unittest.TestCase):
     def test_update_container(self):
         versions = {
             "container_image_version": {
+                "trinodb/trino": 400,
                 "postgres": "8.0",
                 "mysql": "999.0",
             },
