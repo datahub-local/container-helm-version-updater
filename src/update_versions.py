@@ -269,7 +269,7 @@ def update_versions(
 
         if not skip_helm:
             logging.info("Updating Helm Chart versions")
-            changed = _update_helm(versions, version_type)
+            changed = changed or _update_helm(versions, version_type)
 
         if changed:
             if dry_mode:
