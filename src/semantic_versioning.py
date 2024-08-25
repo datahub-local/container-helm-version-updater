@@ -80,7 +80,7 @@ def compare(
         raise ValueError("Invalid version_type. Use 'major', 'minor', or 'patch'.")
 
 
-NONE_FINAL_VERSION_FILTER_REGEX = re.compile(r"^.*(alpha|beta|snap).*$")
+NONE_FINAL_VERSION_FILTER_REGEX = re.compile(r"^.*(alpha|beta|dev|snap).*$")
 
 
 def get_last_valid_version(
