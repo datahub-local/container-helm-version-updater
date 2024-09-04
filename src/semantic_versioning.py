@@ -35,7 +35,10 @@ class SemanticVersion:
             self.patch = _to_human_number(m.group(3)).lstrip(".")
         else:
             raise ValueError(f"Invalid semantic version[{version}]")
+
     def version_type(self):
+        if self.major and self.minor and self.patch and self.patch and any(not c.isnumeric() for c in self.patch):
+            return 4
         if self.major and self.minor and self.patch:
             return 3
         if self.major and self.minor:
@@ -43,6 +46,7 @@ class SemanticVersion:
         if self.major:
             return 1
         return 0
+
 
 def parse(version: str) -> SemanticVersion:
     try:
@@ -58,7 +62,7 @@ def is_newer(
 ) -> bool:
     if version_from.version_type() != version_to.version_type():
         return False
-    
+
     if version_type.lower() == "major":
         return (
             version_to.major > version_from.major
@@ -87,10 +91,12 @@ def is_newer(
             and version_to.patch > version_from.patch
         )
     else:
-        raise ValueError("Invalid version_type. Use 'major', 'minor', or 'patch'.")
+        raise ValueError(
+            "Invalid version_type. Use 'major', 'minor', or 'patch'.")
 
 
-NONE_FINAL_VERSION_FILTER_REGEX = re.compile(r"^.*(alpha|[0-9]+[abs][0-9]+|beta|dev|snap).*$")
+NONE_FINAL_VERSION_FILTER_REGEX = re.compile(
+    r"^.*(alpha|[0-9]+[abs][0-9]+|beta|dev|snap).*$")
 
 
 def get_last_valid_version(

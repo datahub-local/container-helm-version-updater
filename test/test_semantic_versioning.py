@@ -56,6 +56,10 @@ class TestSemanticVersioning(unittest.TestCase):
         self.assertFalse(
             is_newer(SemanticVersion("2"), SemanticVersion("1.2.0"), "major")
         )
+        self.assertFalse(
+            is_newer(SemanticVersion("1.2.3-aaa"),
+                    SemanticVersion("1.2.2"), "major")
+        )
 
     def test_minor_comparison(self):
         self.assertTrue(
@@ -119,6 +123,14 @@ class TestSemanticVersioning(unittest.TestCase):
             get_last_valid_version(
                 versions,
                 SemanticVersion("1.2.0"),
+                "patch",
+            ),
+            SemanticVersion("1.2.3"),
+        )
+        self.assertEqual(
+            get_last_valid_version(
+                versions,
+                SemanticVersion("1.2.0a"),
                 "patch",
             ),
             SemanticVersion("1.2.7abc"),
