@@ -2,7 +2,7 @@ import json
 import unittest
 
 import update_versions.semantic_versioning as sv
-from update_versions.update_versions import _update_container, _update_helm
+from update_versions import _update_container, _update_helm
 
 
 class TestUpdateVersions(unittest.TestCase):
