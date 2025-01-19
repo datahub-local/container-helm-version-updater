@@ -118,8 +118,8 @@ def _get_container_versions(image_name: str) -> List[str]:
         if image_paths_size == 1:
             image_name = f"library/{image_name}"
 
-        registry_url = "https://registry.hub.docker.com"
-        url = f"{registry_url}/v2/repositories/{image_name}/tags"
+        reg_url = "https://registry.hub.docker.com"
+        url = f"{reg_url}/v2/repositories/{image_name}/tags"
 
         tags = _fetch_docker_hub_url(url)
 
@@ -136,16 +136,15 @@ def _get_container_versions(image_name: str) -> List[str]:
         image_name = image_paths[1:]
 
         if registry_name == "ghcr.io" and "GITHUB_TOKEN" in os.environ:
-            organization_name, package_name = image_name
+            org_name, pkg_name = image_name
 
-            registry_url = "https://api.github.com"
+            reg_url = "https://api.github.com"
 
-            url = f"{
-                registry_url}/orgs/{organization_name}/packages/container/{package_name}/versions"
+            u = f"{reg_url}/orgs/{org_name}/packages/container/{pkg_name}/versions"
 
             token = os.environ.get("GITHUB_TOKEN")
             packages = _fetch_github_url(
-                url,
+                u,
                 headers={
                     "Accept": "application/vnd.github+json",
                     "Authorization": f"Bearer {token}",
