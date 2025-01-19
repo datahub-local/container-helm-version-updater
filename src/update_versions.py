@@ -80,7 +80,8 @@ def _fetch_docker_hub_url(url, headers={}, max_items=100):
             url = response.json().get("next")
         else:
             logging.warning(
-                f"Failed to retrieve url[{url}]: {response.status_code} - {response.text}"
+                f"Failed to retrieve url[{url}]: {
+                    response.status_code} - {response.text}"
             )
             break
     return data
@@ -92,7 +93,7 @@ def _fetch_github_url(url, headers={}, max_items=100):
             links = response.headers["Link"]
             for link in links.split(","):
                 if 'rel="next"' in link:
-                    return link[link.find("<") + 1 : link.find(">")]
+                    return link[link.find("<") + 1: link.find(">")]
         return None
 
     data = []
@@ -103,7 +104,8 @@ def _fetch_github_url(url, headers={}, max_items=100):
             url = _get_next_page_url(response)
         else:
             logging.warning(
-                f"Failed to retrieve url[{url}]: {response.status_code} - {response.text}"
+                f"Failed to retrieve url[{url}]: {
+                    response.status_code} - {response.text}"
             )
             break
     return data
@@ -142,7 +144,8 @@ def _get_container_versions(image_name: str) -> List[str]:
 
             registry_url = "https://api.github.com"
 
-            url = f"{registry_url}/orgs/{organization_name}/packages/container/{package_name}/versions"
+            url = f"{
+                registry_url}/orgs/{organization_name}/packages/container/{package_name}/versions"
 
             token = os.environ.get("GITHUB_TOKEN")
             packages = _fetch_github_url(
@@ -223,7 +226,8 @@ def _update_helm(versions: Dict[str, Any], version_type: str) -> bool:
             repo_url = helm_chart_repository.get(repo_name)
 
             if repo_url:
-                helm_versions = _get_helm_versions(repo_name, repo_url, chart_name)
+                helm_versions = _get_helm_versions(
+                    repo_name, repo_url, chart_name)
                 last_version = sv.get_last_valid_version(
                     helm_versions,
                     current_version,
@@ -242,7 +246,8 @@ def _update_helm(versions: Dict[str, Any], version_type: str) -> bool:
 
                     changed = True
             else:
-                logging.warning("Chart '%s' does not have a repo_url", full_chart_name)
+                logging.warning(
+                    "Chart '%s' does not have a repo_url", full_chart_name)
 
         if changed:
             versions[HELM_CHART_VERSION_ATTRIBURE] = helm_chart_versions
@@ -294,12 +299,15 @@ def main():
         dest="versions_file",
         help="Path to the YAML file",
     )
-    parser.add_argument("--version-type", dest="version_type", default="minor")
-    parser.add_argument("--skip-helm", dest="skip_helm", type=_str2bool, default=False)
+    parser.add_argument("--version-type", dest="version_type",
+                        default=os.getenv("INPUT_VERSION_TYPE", "minor"))
+    parser.add_argument("--skip-helm", dest="skip_helm", type=_str2bool,
+                        default=_str2bool(os.getenv("INPUT_SKIP_HELM", "false")))
     parser.add_argument(
-        "--skip-container", dest="skip_container", type=_str2bool, default=False
+        "--skip-container", dest="skip_container", type=_str2bool, default=_str2bool(os.getenv("INPUT_SKIP_CONTAINER", "false"))
     )
-    parser.add_argument("--dry-mode", dest="dry_mode", action="store_true")
+    parser.add_argument("--dry-mode", dest="dry_mode", action="store_true",
+                        default=_str2bool(os.getenv("INPUT_DRY_MODE", "false")))
     args = parser.parse_args()
 
     logging.info(
@@ -307,7 +315,7 @@ def main():
     )
 
     result = update_versions(
-        args.versions_file,
+        (args.versions_file),
         args.version_type,
         skip_container=args.skip_container,
         skip_helm=args.skip_helm,
