@@ -219,12 +219,6 @@ def _update_helm(versions: Dict[str, Any], version_type: str) -> bool:
     helm_chart_repository = versions.get(HELM_CHART_REPOSITORY_ATTRIBURE, {})
 
     changed = False
-    
-    logging.info(
-        "Updating charts[helm_chart_versions=%s,helm_chart_repository=%s]",
-        helm_chart_versions,
-        helm_chart_repository,
-    )
 
     if helm_chart_versions and helm_chart_repository:
         for full_chart_name, _current_version in helm_chart_versions.items():
@@ -282,7 +276,7 @@ def update_versions(
 
         if not skip_helm:
             logging.info("Updating Helm Chart versions")
-            changed = changed or _update_helm(versions, version_type)
+            changed = _update_helm(versions, version_type) or changed
 
         if changed:
             if dry_mode:
