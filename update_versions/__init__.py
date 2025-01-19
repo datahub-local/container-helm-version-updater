@@ -41,7 +41,7 @@ def _get_helm_versions(repo_name: str, repo_url: str, chart_name) -> List[str]:
 
     try:
         if repo_name not in _HELM_REPOSITORY_CHART_VERSION_CACHE:
-            logging.debug("Loading charts for repoisitory '%s'", repo_name)
+            logging.info("Loading charts for repository '%s'", repo_name)
 
             response = requests.get(
                 f"{repo_url}/index.yaml", headers={'Cache-Control': 'no-cache'})
@@ -63,6 +63,8 @@ def _get_helm_versions(repo_name: str, repo_url: str, chart_name) -> List[str]:
                 ]
 
                 _HELM_REPOSITORY_CHART_VERSION_CACHE[repo_name][_key] = versions
+        else:
+            logging.info("Repository '%s' already in cache", repo_name)
 
         return _HELM_REPOSITORY_CHART_VERSION_CACHE.get(repo_name).get(chart_name)
     except Exception as e:
@@ -217,6 +219,12 @@ def _update_helm(versions: Dict[str, Any], version_type: str) -> bool:
     helm_chart_repository = versions.get(HELM_CHART_REPOSITORY_ATTRIBURE, {})
 
     changed = False
+    
+    logging.info(
+        "Updating charts[helm_chart_versions=%s,helm_chart_repository=%s]",
+        helm_chart_versions,
+        helm_chart_repository,
+    )
 
     if helm_chart_versions and helm_chart_repository:
         for full_chart_name, _current_version in helm_chart_versions.items():
