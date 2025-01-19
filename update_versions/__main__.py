@@ -7,7 +7,7 @@ import re
 import sys
 from typing import Any, Dict, List
 
-import src.semantic_versioning as sv
+import update_versions.semantic_versioning as sv
 
 import requests
 import yaml
@@ -142,7 +142,8 @@ def _get_container_versions(image_name: str) -> List[str]:
 
             registry_url = "https://api.github.com"
 
-            url = f"{registry_url}/orgs/{organization_name}/packages/container/{package_name}/versions"
+            url = f"{
+                registry_url}/orgs/{organization_name}/packages/container/{package_name}/versions"
 
             token = os.environ.get("GITHUB_TOKEN")
             packages = _fetch_github_url(
@@ -292,9 +293,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--versions-file",
-        required=True,
         dest="versions_file",
         help="Path to the YAML file",
+        default=os.getenv("INPUT_VERSIONS_FILE", "version.yaml")
     )
     parser.add_argument("--version-type", dest="version_type",
                         default=os.getenv("INPUT_VERSION_TYPE", "minor"))

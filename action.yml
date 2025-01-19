@@ -26,7 +26,8 @@ runs:
   using: "docker"
   image: "Dockerfile"
   args:
-    - /app/src/update_versions.py
+    - -m
+    - update_versions
     - --versions-file
     - ${{ inputs.versions-file }}
     - --skip-container

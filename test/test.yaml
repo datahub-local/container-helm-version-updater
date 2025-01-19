@@ -1,0 +1,13 @@
+container_image_version:
+  ghcr.io/c4illin/convertx: v0.3.3
+  ghcr.io/coder/code-server: 4.96.2
+  ghcr.io/corentinth/it-tools: 2024.5.13-a0bc346
+  ghcr.io/datahub-local/dagster-celery-k8s-oci: 1.9.2
+helm_chart_repository:
+  bitnami: https://charts.bitnami.com/bitnami
+  bjw-s: https://bjw-s.github.io/helm-charts
+  dagster: https://dagster-io.github.io/helm
+helm_chart_version:
+  bitnami/postgresql: 15.5.21
+  bitnami/valkey: 2.2.3
+  bjw-s/app-template: 3.3.2

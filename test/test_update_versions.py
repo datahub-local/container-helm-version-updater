@@ -1,8 +1,8 @@
 import json
 import unittest
 
-import src.semantic_versioning as sv
-from src.update_versions import _update_container, _update_helm
+import update_versions.semantic_versioning as sv
+from update_versions.update_versions import _update_container, _update_helm
 
 
 class TestUpdateVersions(unittest.TestCase):

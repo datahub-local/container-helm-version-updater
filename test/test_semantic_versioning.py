@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from src.semantic_versioning import (
+from update_versions.semantic_versioning import (
     SemanticVersion,
     is_newer,
     get_last_valid_version,
