@@ -43,7 +43,8 @@ def _get_helm_versions(repo_name: str, repo_url: str, chart_name) -> List[str]:
         if repo_name not in _HELM_REPOSITORY_CHART_VERSION_CACHE:
             logging.debug("Loading charts for repoisitory '%s'", repo_name)
 
-            response = requests.get(f"{repo_url}/index.yaml")
+            response = requests.get(
+                f"{repo_url}/index.yaml", headers={'Cache-Control': 'no-cache'})
 
             response.raise_for_status()
 
@@ -71,6 +72,8 @@ def _get_helm_versions(repo_name: str, repo_url: str, chart_name) -> List[str]:
 def _fetch_docker_hub_url(url, headers={}, max_items=100):
     data = []
 
+    headers["Cache-Control"] = "no-cache"
+
     while url and len(data) < max_items:
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -85,6 +88,8 @@ def _fetch_docker_hub_url(url, headers={}, max_items=100):
 
 
 def _fetch_github_url(url, headers={}, max_items=100):
+    headers["Cache-Control"] = "no-cache"
+
     def _get_next_page_url(response):
         if "Link" in response.headers:
             links = response.headers["Link"]
