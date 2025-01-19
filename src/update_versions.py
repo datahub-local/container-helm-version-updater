@@ -80,8 +80,7 @@ def _fetch_docker_hub_url(url, headers={}, max_items=100):
             url = response.json().get("next")
         else:
             logging.warning(
-                f"Failed to retrieve url[{url}]: {
-                    response.status_code} - {response.text}"
+                f"Failed to retrieve url[{url}]: {response}"
             )
             break
     return data
