@@ -103,8 +103,7 @@ def _fetch_github_url(url, headers={}, max_items=100):
             url = _get_next_page_url(response)
         else:
             logging.warning(
-                f"Failed to retrieve url[{url}]: {
-                    response.status_code} - {response.text}"
+                f"Failed to retrieve url[{url}]: {response}"
             )
             break
     return data
@@ -143,8 +142,7 @@ def _get_container_versions(image_name: str) -> List[str]:
 
             registry_url = "https://api.github.com"
 
-            url = f"{
-                registry_url}/orgs/{organization_name}/packages/container/{package_name}/versions"
+            url = f"{registry_url}/orgs/{organization_name}/packages/container/{package_name}/versions"
 
             token = os.environ.get("GITHUB_TOKEN")
             packages = _fetch_github_url(
